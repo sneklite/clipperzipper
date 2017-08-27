@@ -1,5 +1,6 @@
 from flask import Flask, render_template, url_for
-from clipperzipper import *
+from clipperzipper import Messages as ClipZip
+import logging
 import os
 
 app = Flask(__name__)
@@ -16,7 +17,7 @@ def index(channel=None, usernames=None, time=None, mentions=True):
         else:
             return render_template('404.html'), 404
         usernames = usernames.split("+")
-        logstxt = clipperzipper(channel, usernames, time, mentions, debug=True)
+        logstxt = ClipZip.clipperzipper(channel, usernames, time, mentions)
         if logstxt == "":
             logstxt = "no logs found for this request."
     return render_template("index.html", logstxt=logstxt)
@@ -40,6 +41,7 @@ def dated_url_for(endpoint, **values):
 
 @app.errorhandler(404)
 def page_not_found(e):
+    logging.debug(e)
     return render_template('404.html'), 404
 
 if __name__ == "__main__":
