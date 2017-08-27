@@ -44,11 +44,11 @@ def get_urls(channel, user, start, end):
     cached_months = []
     urls = []
     while inc.datetime <= end.datetime:
-        month_name = months[str(inc.month).zfill(2)]
+        month_name = months[str(inc.month).zfill(2)] + "-" + str(inc.year)
         inc += 1  # increments the associated timestamp by a day
         if month_name not in cached_months:
             cached_months.append(month_name)
-            url = base + month_name + "%20" + \
+            url = base + months[str(inc.month).zfill(2)] + "%20" + \
                 str(inc.year) + "/userlogs/" + user + ".txt"
             urls.append(url)
     return urls
