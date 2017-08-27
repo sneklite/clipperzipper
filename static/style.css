@@ -1,0 +1,104 @@
+body {
+ color: #DEDEDE;
+ background-color: #212121;
+}
+
+h1 {
+text-align: center;
+ font-family: "Helvetica";
+}
+
+#img-logo {
+ display: inline-block;
+ height: auto;
+ width: auto;
+ max-width: 27%;
+ max-height: 27%;
+ margin-left: 58%;
+ cursor: pointer; cursor: hand;
+}
+
+#main-text {
+white-space: pre-wrap;
+font-style: normal;
+font-family: "Verdana";
+font-size: 17px;
+}
+
+
+#left-container {
+font-family: "Verdana";
+font-weight: bold;
+float: left;
+width: 40%;
+}
+
+#right-container {
+float: right;
+width: 60%;
+}
+
+#channel {
+width: 48%;
+font-size:120%;
+margin: 5px;
+}
+
+#users {
+ width: 50%;
+ font-family: "Verdana";
+ font-size:110%;
+}
+
+#data-entry {
+width:60%;
+margin-left: 15%;
+padding-left: 7%;
+border: 3px solid #ff5722;
+}
+
+#must-fill {
+margin-left: 58%;
+font-weight: normal;
+font-size: 90%;
+color: red;
+display: none;
+}
+
+#time-unit {
+width: 6%;
+}
+
+.info {
+font-family: "Verdana";
+font-size: 100%;
+padding: 1px;
+}
+
+#about, #help {
+background-color: #ff5722;
+color: white;
+font-family: verdana;
+font-size: 130%;
+text-align: center;
+width: 64%;
+margin-left: 15%;
+padding: 2%;
+cursor: pointer; cursor: hand;
+}
+
+.slide-out {
+background-color: #212121;
+color #DEDEDE;
+font-weight: normal;
+font-family: "Verdana";
+font-size: 74%;
+text-align: justify;
+padding: 2%;
+margin: 2%;
+cursor: initial;
+}
+
+a {
+color: deepskyblue;
+}

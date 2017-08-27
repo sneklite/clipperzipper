@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<head>
+<title>ClipperZipper</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<body>
+<br><br>
+   <div id="left-container">
+    <div id="data-entry">
+    <h1>ClipperZipper</h1>
+      Channel: <br><input id="channel" type="text" name="channel" autocomplete="on" spellcheck="false"><br>
+        <br>
+      Users: <br><textarea id="users" rows="2" name="users" spellcheck="false" required>
+</textarea><br>
+        <br>
+        Timeframe:<br><br>
+        past <input id="time-unit" type="text" name="time-unit" required>
+        <select id="time-period" name="time-period">
+          <option>hours</option>
+          <option>days</option>
+          <option>weeks</option>
+          <option>months</option>
+        </select>
+        <br><br>
+        mentions only? <br><input id="yes" type="radio" name="group1" value="yes" checked> yes
+                        <input id="no" type="radio" name="group1" value="no"> no
+        <br>
+        <label id="must-fill">All fields must be filled in.</label>
+        <img id="img-logo" src="{{ url_for('static', filename='img/clipper_zipper.png') }}" title="clipperzipper_logo" onclick="reload()">
+        <br><br>
+    </div>
+       <br><br><br>
+       <div id="about" class="orange-button">About
+       <div class="slide-out" id="about-info">ClipperZipper is a web scraping tool for retrieving chat logs from
+           <a href="http://overrustlelogs.net/" target="_blank">OverRustleLogs</a>,
+           a website which logs the chat messages for several hundred <a href="http://twitch.tv/" target="_blank">Twitch</a> channels.
+           <br>
+           <br>
+           On OverRustleLogs, you can only view the monthly logs of a single user at once. But with ClipperZipper, you can
+           retrieve logs from a more specified timeframe, and you can view the logs of multiple
+           specified users at once. This makes viewing conversations in chat easy.
+           <br></div>
+       </div>
+       <br>
+       <div id="help" class="orange-button">Help
+       <div class="slide-out" id="help-info">
+        To use ClipperZipper, start by providing a valid channel name. The list of available channels can be viewed
+           <a href="https://overrustlelogs.net" target="_blank">here</a>.
+           <br><br>
+           Then, provide a list of users whose logs you wish to retrieve, separating each user with a comma and a space
+           (e.g., &lt;username1&gt;, &lt;username2&gt;).
+           <br><br>
+           Logs are retrieved from the current time (UTC) back to the past X months/weeks/days/hours.
+           <br><br>
+           The "mentions only" setting means that the logs should only consist of messages where the users mention each other.
+           This is standard for viewing conversations.
+           Otherwise, all of those users' logs from the specified time will be retrieved.
+           <br>
+       </div>
+       </div>
+       <br><br><br>
+</div>
+   <div id="right-container">
+       <span id="channel-name" class="info"><b>Channel:</b> </span>
+       <br>
+       <span id="users-name" class="info"><b>Users: </b></span>
+       <br>
+       <span id="time-name" class="info"><b>Timeframe: </b></span>
+       <br>
+       <span id="mentions-name" class="info"><b>Mentions only: </b></span>
+       <br><br>
+    <div id="log-display">
+        <div id="main-text">{{logstxt}}</div>
+        </div>
+</div>
+</body>
+<script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
