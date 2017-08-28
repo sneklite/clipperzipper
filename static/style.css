@@ -50,6 +50,12 @@ margin: 5px;
  font-size:110%;
 }
 
+#find {
+ width: 50%;
+ font-family: "Verdana";
+ font-size:100%;
+}
+
 #data-entry {
 width:60%;
 margin-left: 15%;

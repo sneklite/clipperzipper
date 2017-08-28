@@ -56,36 +56,49 @@ def get_urls(channel, user, start, end):
 
 def get_messages(urls, start, end):
 
-    """Retrieves all userlogs existing between a set start time and end time"""
+    """Retrieves all userlogs existing between a set start time and end time
+    Also returns a boolean telling us if this user exists.
+    """
     dt_start = dt.strptime(Timestamp.formatted_timestamp(start), "%Y-%m-%d-%H-%M-%S")
     dt_end = dt.strptime(Timestamp.formatted_timestamp(end), "%Y-%m-%d-%H-%M-%S")
     all_msg = []
+    found = False
     for i, url in enumerate(urls):
-        logs = requests.get(url).text
-        time.sleep(1)
-        if not logs.startswith("didn't find any logs for this user"):  # skip if can't find logs
+        # include logging debug info for timing requests
+        pre_req = time.clock()
+        req = requests.get(url)
+        logs = req.text
+        logging.debug("request took " + str(time.clock() - pre_req) + " for url " + url)
+        if not req.status_code == 404:  # skip if can't find logs
             messages = [Message(m) for m in logs.split("\n")[:-1]]
+            found = True  # we found at least 1 log from this user; they exist!
             for m in messages:
                 ts = Timestamp(m.timestamp).datetime
                 if dt_start <= ts <= dt_end:
                     all_msg.append(m)
-    return all_msg
+    return all_msg, found
 
 
-def zipper(channel, users, start, end, mentions=False):
+def zipper(channel, users, start, end,
+           mentions=False, tokens=None, verify=False):
     """
     :param channel: The channel we wish to retrieve logs from
     :param users: The list of users whose logs we wish to collect
     :param start: The timestamp that determines where we should start collecting messages
     :param end: The timestamp that determines where we should end collecting messages
     :param mentions: If mentions is True, will only return message which mention at least one user from users
+    :param tokens: Only return messages if the message includes at least 1 item from the token list
     :return: Returns a master list of all messages within a specified time, organized by timestamps
     """
     users = [u.lower() for u in users]
     master_list = []
     for user in users:
         messages = clipper(channel, user, start, end)
-        for message in messages:
+        found = messages[1]
+        if verify:
+            if not found:
+                users.remove(user)
+        for message in messages[0]:
             master_list.append(message)
     master_list = sorted(set(master_list), key=lambda m: m.raw)
     if mentions:
@@ -93,10 +106,14 @@ def zipper(channel, users, start, end, mentions=False):
                        if any(user in m.message.lower()
                               # exclude self-mentions
                               for user in users if not user.lower() == m.username.lower())]
+    if tokens:
+        tokens = [t.lower() for t in tokens]
+        master_list = [m for m in master_list if any(t in m.message.lower() for t in tokens)]
     return master_list
 
 
 def time_map(time_in):
+    """helps turn 'past X time_units' into a usable timestamp variable"""
     tmap = {"months": 0, "weeks": 1, "days": 1, "hours": 2}
     tvalues = [0, 0, 0]  # [months, days, hours]
     tlist = time_in.split(" ")  # "past" "x" "time units"
@@ -110,12 +127,12 @@ def time_map(time_in):
             if tlist[1] == "week":
                 tvalues[1] *= 7
         else:
-            logging.debug("ClipperZipper: time_map():Time map error - the provided time argument is invalid")
+            logging.debug("Time map error - the provided time argument is invalid")
     return tvalues
 
 
-def clipperzipper(channel, users, time_in, mentions=False, debug=False):
-
+def clipperzipper(channel, users, time_in, mentions=False, debug=False, tokens=None):
+    """handles the creation of the timestamp objects and calls the zipper method"""
     if debug:
         logging.basicConfig(level=logging.DEBUG)
 
@@ -130,8 +147,9 @@ def clipperzipper(channel, users, time_in, mentions=False, debug=False):
         start = Timestamp(time_in.split(", ")[0])
         end = Timestamp(time_in.split(", ")[1])
     else:
-        logging.debug("ClipperZipper: clipperzipper(): Timestamps are not valid.")
+        logging.warning("ClipperZipper: clipperzipper(): Timestamps are not valid.")
         return ""
-    message_items = zipper(channel, users, start, end, mentions)
+    message_items = zipper(channel, users, start, end, mentions,
+                           tokens=tokens)
     logs_txt = '\n'.join(m.raw for m in message_items)
     return logs_txt

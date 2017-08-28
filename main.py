@@ -8,16 +8,20 @@ app = Flask(__name__)
 
 @app.route('/')
 @app.route('/<channel>/<usernames>/<time>/<int:mentions>')
-def index(channel=None, usernames=None, time=None, mentions=True):
+@app.route('/<channel>/<usernames>/<time>/<int:mentions>/<find>')
+def index(channel=None, usernames=None, time=None, mentions=0, find=None):
     logstxt = "Logs should appear here!"
     if channel and usernames and time:
+        tokens = []
         mmap = {1: True, 0: False}
         if mentions in mmap.keys():
             mentions = mmap[mentions]
         else:
             return render_template('404.html'), 404
         usernames = usernames.split("+")
-        logstxt = ClipZip.clipperzipper(channel, usernames, time, mentions)
+        if find:
+            tokens = find.split("+")
+        logstxt = ClipZip.clipperzipper(channel, usernames, time, mentions, tokens=tokens, debug=True)
         if logstxt == "":
             logstxt = "no logs found for this request."
     return render_template("index.html", logstxt=logstxt)
@@ -46,4 +50,4 @@ def page_not_found(e):
 
 if __name__ == "__main__":
     # runs off port 5000
-    app.run(debug=True)
+    app.run(debug=False)

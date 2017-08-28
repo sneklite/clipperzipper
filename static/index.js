@@ -16,78 +16,94 @@ $(document).ready(function() {
 });
 
 document.getElementById("must-fill").style.display = "none";
+document.getElementById("find-name").style.display = "none";
 
 function reload() {
-console.log("reload pressed!1")
-var base = "/";
-var channel = document.getElementById("channel").value;
-// dgg shortcut
-if (channel === "dgg") {
-    channel = "Destinygg";
+    var base = "/";
+    var channel = document.getElementById("channel").value;
+    // dgg shortcut
+    if (channel === "dgg") {
+        channel = "Destinygg";
+    }
+    var users = document.getElementById("users").value.replace(/,\s/g, "+");
+    var time_unit = document.getElementById("time-unit").value;
+    var time_field = document.getElementById("time-period");
+    var time_period = time_field.options[time_field.selectedIndex].value;
+    time_period = time_period.replace(/\(s\)/g, "s");
+    var time = "";
+
+    if (time_unit === "1") {
+        time_period = time_period.slice(0, time_period.length - 1);
+        time = "past " + time_period;
+    } else if (time_unit > 1) {
+        time = "past " + time_unit + " " + time_period;
+    } else if (time_unit != "") {
+        time_period = time_period.slice(0, time_period.length - 1);
+        time = "past " + time_period;
+    }
+
+    var find_tokens = "";
+    if (document.getElementById("find").value != "") {
+        find_tokens = "/" + document.getElementById("find").value.replace(/,\s/g, "+");
+    }
+
+    var mentions = "0";
+    if (document.getElementById("yes").checked) {
+        mentions = "1";
+    }
+
+    if (channel === "" || users === "" || time === "") {
+        document.getElementById("must-fill").style.display = "inline";
+    } else {
+        var url = base + channel + "/" + users + "/" + time +
+                  "/" + mentions + find_tokens;
+        // Note: if URL base = "/", "/" causes NS_ERROR_MALFORMED_URI
+        location.href = url;
+    }
 }
-var users = document.getElementById("users").value.replace(/,/g, "").replace(/\s/g, "+");
-var time_unit = document.getElementById("time-unit").value;
-var time_field = document.getElementById("time-period");
-var time_period = time_field.options[time_field.selectedIndex].value;
-var time = "";
 
-if (time_unit === "1") {
-    console.log(time_unit);
-    time_period = time_period.slice(0, time_period.length - 1);
-    time = "past " + time_period;
-} else if (time_unit > 1) {
-    time = "past " + time_unit + " " + time_period;
-} else if (time_unit != "") {
-    time_period = time_period.slice(0, time_period.length - 1);
-    time = "past " + time_period;
+function getValues() {
+
+    var url = window.location.href;
+    var url_list = url.split("/")
+
+    if (url_list.length > 4) {
+
+        var check = url_list[url_list.length - 2];
+        var n = 0;
+
+        if (!isNaN(check) && parseInt(Number(check)) == check &&
+            !isNaN(parseInt(check, 10))) {
+            // 2nd to last item is an int (mentions), so find is present
+            var find = url_list[url_list.length-1].replace(/\+/g, ", ");
+            document.getElementById("find-name").innerHTML = "<br><b>ctrl+f: </b>" +find;
+            document.getElementById("find-name").style.display = "inline";
+            n = 1;
+        }
+
+        var get_mentions = url_list[url_list.length - n - 1];
+        var mentions = "no";
+        if (get_mentions == "1") {
+            mentions = "yes";
+            document.getElementById("yes").checked = true;
+        }
+
+        document.getElementById("mentions-name").innerHTML = "<b>Mentions only: </b>" + mentions;
+        var time = url_list[url_list.length - n - 2].replace(/%20/g, " ");
+        document.getElementById("time-name").innerHTML = "<b>Time: </b>" + time;
+        var users = url_list[url_list.length - n - 3].replace(/\+/g, ", ");
+        document.getElementById("users-name").innerHTML = "<b>Users: </b>" + users;
+        var channel = url_list[url_list.length - n - 4];
+        document.getElementById("channel-name").innerHTML = "<b>Channel: </b>" + channel;
+        document.getElementById("channel").value = channel;
+    } else {
+        /*
+        var spans = document.getElementsByClassName('info');
+        for (var i = 0; i < spans.length; i++) {
+           spans[i].style.display = "none";
+        }
+        */
+    }
 }
 
-var mentions = "0";
-if (document.getElementById("yes").checked) {
-    console.log(document.getElementById("yes").checked);
-    mentions = "1";
-}
-
-if (channel === "" || users === "" || time === "") {
- document.getElementById("must-fill").style.display = "inline";
-} else {
-console.log("reload pressed!2")
-var url = base + channel + "/" + users + "/" + time + "/" + mentions
-// if URL base = "/", "/" causes NS_ERROR_MALFORMED_URI
-location.href = url;
-}
-}
-
- function getValues() {
-
- var url = window.location.href;
- var url_list = url.split("/")
- console.log(url);
-
- if (url_list.length > 4) {
- var mentions = url_list[url_list.length-1];
- if (mentions == "1") {
-    mentions = "yes";
- } else {
-    mentions = "no";
- }
-
- document.getElementById("mentions-name").innerHTML = "<b>Mentions only: </b>" + mentions;
- var time = url_list[url_list.length-2].replace(/%20/g, " ");
- document.getElementById("time-name").innerHTML = "<b>Time: </b>" + time;
- var users = url_list[url_list.length-3].replace(/\+/g, ", ");
- document.getElementById("users-name").innerHTML = "<b>Users: </b>" + users;
- var channel = url_list[url_list.length-4];
- document.getElementById("channel-name").innerHTML = "<b>Channel: </b>" + channel;
- document.getElementById("channel").value = channel;
-     } else {
-     /*
-     var spans = document.getElementsByClassName('info');
-     for (var i = 0; i < spans.length; i++) {
-        spans[i].style.display = "none";
-     }
-     */
-     }
- }
-
- getValues();
+getValues();
