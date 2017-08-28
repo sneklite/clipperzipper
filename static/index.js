@@ -19,6 +19,7 @@ document.getElementById("must-fill").style.display = "none";
 document.getElementById("find-name").style.display = "none";
 
 function reload() {
+
     var base = "/";
     var channel = document.getElementById("channel").value;
     // dgg shortcut
@@ -26,6 +27,17 @@ function reload() {
         channel = "Destinygg";
     }
     var users = document.getElementById("users").value.replace(/,\s/g, "+");
+    if (/^([a-zA-Z0-9]+,\s|\w)+$/.test(document.getElementById("users").value)) {
+        var users = document.getElementById("users").value.replace(/,\s/g, "+");
+    } else if (document.getElementById("users").value != "") {
+        document.getElementById("must-fill").innerHTML = "users not formatted correctly";
+        document.getElementById("must-fill").style.display = "inline";
+        return;
+    }
+
+    if (channel === "" || users === "") {
+        document.getElementById("must-fill").style.display = "inline";
+    } else {
     var time_unit = document.getElementById("time-unit").value;
     var time_field = document.getElementById("time-period");
     var time_period = time_field.options[time_field.selectedIndex].value;
@@ -37,7 +49,7 @@ function reload() {
         time = "past " + time_period;
     } else if (time_unit > 1) {
         time = "past " + time_unit + " " + time_period;
-    } else if (time_unit != "") {
+    } else  {
         time_period = time_period.slice(0, time_period.length - 1);
         time = "past " + time_period;
     }
@@ -45,6 +57,7 @@ function reload() {
     var find_tokens = "";
     if (document.getElementById("find").value != "") {
         find_tokens = "/" + document.getElementById("find").value.replace(/,\s/g, "+");
+        find_tokens = find_tokens.replace()
     }
 
     var mentions = "0";
@@ -52,13 +65,10 @@ function reload() {
         mentions = "1";
     }
 
-    if (channel === "" || users === "" || time === "") {
-        document.getElementById("must-fill").style.display = "inline";
-    } else {
-        var url = base + channel + "/" + users + "/" + time +
-                  "/" + mentions + find_tokens;
-        // Note: if URL base = "/", "/" causes NS_ERROR_MALFORMED_URI
-        location.href = url;
+    var url = base + channel + "/" + users + "/" + time +
+              "/" + mentions + find_tokens;
+    // Note: if URL base = "/", "/" causes NS_ERROR_MALFORMED_URI
+    location.href = url;
     }
 }
 
@@ -75,8 +85,8 @@ function getValues() {
         if (!isNaN(check) && parseInt(Number(check)) == check &&
             !isNaN(parseInt(check, 10))) {
             // 2nd to last item is an int (mentions), so find is present
-            var find = url_list[url_list.length-1].replace(/\+/g, ", ");
-            document.getElementById("find-name").innerHTML = "<br><b>ctrl+f: </b>" +find;
+            var find = url_list[url_list.length-1].replace(/\+/g, ", ").replace(/%20/g, " ");
+            document.getElementById("find-name").innerHTML = "<br><b>Search terms: </b>" +find;
             document.getElementById("find-name").style.display = "inline";
             n = 1;
         }
@@ -91,7 +101,7 @@ function getValues() {
         document.getElementById("mentions-name").innerHTML = "<b>Mentions only: </b>" + mentions;
         var time = url_list[url_list.length - n - 2].replace(/%20/g, " ");
         document.getElementById("time-name").innerHTML = "<b>Time: </b>" + time;
-        var users = url_list[url_list.length - n - 3].replace(/\+/g, ", ");
+        var users = url_list[url_list.length - n - 3].replace(/\+/g, ", ").replace(/%20/g, " ");
         document.getElementById("users-name").innerHTML = "<b>Users: </b>" + users;
         var channel = url_list[url_list.length - n - 4];
         document.getElementById("channel-name").innerHTML = "<b>Channel: </b>" + channel;

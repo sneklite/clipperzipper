@@ -18,10 +18,10 @@ def index(channel=None, usernames=None, time=None, mentions=0, find=None):
             mentions = mmap[mentions]
         else:
             return render_template('404.html'), 404
-        usernames = usernames.split("+")
+        usernames = usernames.replace(" ", "").split("+")
         if find:
             tokens = find.split("+")
-        logstxt = ClipZip.clipperzipper(channel, usernames, time, mentions, tokens=tokens, debug=True)
+        logstxt = ClipZip.clipperzipper(channel, usernames, time, mentions, tokens=tokens)
         if logstxt == "":
             logstxt = "no logs found for this request."
     return render_template("index.html", logstxt=logstxt)

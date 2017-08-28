@@ -12,9 +12,9 @@ text-align: center;
  display: inline-block;
  height: auto;
  width: auto;
- max-width: 27%;
- max-height: 27%;
- margin-left: 58%;
+ max-width: 33%;
+ max-height: 33%;
+ margin-left: 54%;
  cursor: pointer; cursor: hand;
 }
 
@@ -64,7 +64,7 @@ border: 3px solid #ff5722;
 }
 
 #must-fill {
-margin-left: 58%;
+margin-left: 40%;
 font-weight: normal;
 font-size: 90%;
 color: red;
@@ -76,8 +76,9 @@ width: 6%;
 }
 
 .info {
-font-family: "Verdana";
-font-size: 100%;
+font-family: "Helvetica";
+font-size: 133%;
+color: #fff !important;
 padding: 1px;
 }
 
