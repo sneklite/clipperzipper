@@ -44,20 +44,17 @@ function reload() {
     time_period = time_period.replace(/\(s\)/g, "s");
     var time = "";
 
-    if (time_unit === "1") {
-        time_period = time_period.slice(0, time_period.length - 1);
-        time = "past " + time_period;
-    } else if (time_unit > 1) {
+    if (time_unit > 1) {
         time = "past " + time_unit + " " + time_period;
-    } else  {
-        time_period = time_period.slice(0, time_period.length - 1);
+    }  else  {
+        time_period = time_period.slice(0, time_period.length - 1); // ?
         time = "past " + time_period;
     }
 
     var find_tokens = "";
     if (document.getElementById("find").value != "") {
         find_tokens = "/" + document.getElementById("find").value.replace(/,\s/g, "+");
-        find_tokens = find_tokens.replace()
+        // find_tokens = find_tokens.replace()
     }
 
     var mentions = "0";

@@ -48,7 +48,7 @@ def get_urls(channel, user, start, end):
         inc += 1  # increments the associated timestamp by a day
         if month_name not in cached_months:
             cached_months.append(month_name)
-            url = base + months[str(inc.month).zfill(2)] + "%20" + \
+            url = base + month_name.split("-")[0] + "%20" + \
                 str(inc.year) + "/userlogs/" + user + ".txt"
             urls.append(url)
     return urls
@@ -88,6 +88,7 @@ def zipper(channel, users, start, end,
     :param end: The timestamp that determines where we should end collecting messages
     :param mentions: If mentions is True, will only return message which mention at least one user from users
     :param tokens: Only return messages if the message includes at least 1 item from the token list
+    :param verify: Boolean that tells us if we should be verifying the existence of the users
     :return: Returns a master list of all messages within a specified time, organized by timestamps
     """
     users = [u.lower() for u in users]
