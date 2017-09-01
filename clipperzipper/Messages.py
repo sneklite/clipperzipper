@@ -37,6 +37,7 @@ def get_urls(channel, user, start, end):
     if type(end) == str:
         end = Timestamp(end)
     inc = Timestamp(start.raw)
+    inc.set(hour=0, minute=0, second=0)  # don't let time interfere with date comparison
     base = "https://overrustlelogs.net/" + channel + "%20chatlog/"
     months = {'01': 'January', '02': 'February', '03': 'March', '04': 'April', '05': 'May', '06': 'June',
               '07': 'July', '08': 'August', '09': 'September', '10': 'October', '11': 'November',
@@ -51,6 +52,7 @@ def get_urls(channel, user, start, end):
             url = base + month_name.split("-")[0] + "%20" + \
                 str(inc.year) + "/userlogs/" + user + ".txt"
             urls.append(url)
+    logging.info("urls gathered: " + str(urls))
     return urls
 
 
@@ -150,6 +152,7 @@ def clipperzipper(channel, users, time_in, mentions=False, debug=False, tokens=N
     else:
         logging.warning("ClipperZipper: clipperzipper(): Timestamps are not valid.")
         return ""
+    logging.info("start timestamp: " + str(start) + " end timestamp: " + str(end))
     message_items = zipper(channel, users, start, end, mentions,
                            tokens=tokens)
     logs_txt = '\n'.join(m.raw for m in message_items)
